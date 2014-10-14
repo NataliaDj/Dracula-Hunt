@@ -136,3 +136,8 @@ int abbrevToID(char *abbrev)
    }
    return NOWHERE;
 }
+
+//Given a Place number, return its abbreviation
+char *idToAbbrev(int p) {
+   return places[p].abbrev;
+}

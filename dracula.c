@@ -8,7 +8,23 @@
 
 void decideDraculaMove(DracView gameState)
 {
-	// TODO ...
-	// Replace the line below by something better
-	registerBestPlay("CD","Mwuhahahaha");
+	//Get some information from game state
+   //PlayerID player = whoAmI(gameState);
+   //LocationID currLocation = whereIs(gameState, player);
+   int *numLocations = NULL;
+   LocationID *locations = whereCanIgo(gameState, numLocations, TRUE,TRUE);
+   Round r = giveMeTheRound(gameState);
+
+   godalmingLocation = whereIs(gameState, PLAYER_LORD_GODALMING);
+   //etc
+
+   if (r == 0) {
+      //Go furthest away from hunters
+      //Prefer port cities
+      //registerBestPlay("CD", "NOTHING");
+   }
+
+   //Register bad move
+   char *move = idToAbbrev(*locations);
+   registerBestPlay(move, "NOTHING");
 }

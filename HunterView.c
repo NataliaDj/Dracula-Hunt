@@ -127,17 +127,17 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea)
 {
     LocationID *location = malloc(*numLocations*sizeof(LocationID));
-
+    //printf("player is %d\n", player);
+    //printf("curlocation is %d\n", currentView->players[player]->curLocation);
     location = connectedLocations(currentView->gameView, numLocations,
                                currentView->players[player]->curLocation, 
                                player, currentView->round,
-                               road, rail, sea);
-
+                               road, rail, sea);/*
     int i;
     for (i = 0; i < *numLocations; ++i)
     {
         printf("%d\n", location[i]);
-    }
+    }*/
 
     return location;
 }

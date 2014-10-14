@@ -115,12 +115,21 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea)
 {
+    if (round == 0) {
+       *numLocations = NUM_MAP_LOCATIONS;
+       LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
+       int i;
+       for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+          locations[i] = i;
+       }
+       return locations;
+    }
+
     int j = 0;
     LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
     LocationID visited[NUM_MAP_LOCATIONS];
 
-    int i;
-    for (i = 0; i < NUM_MAP_LOCATIONS; ++i)
+    for (int i = 0; i < NUM_MAP_LOCATIONS; ++i)
       visited[i] = FALSE;
 
     locations[j] = from;
@@ -130,7 +139,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     if (player == PLAYER_DRACULA)
     {
       visited[ST_JOSEPH_AND_ST_MARYS] = TRUE;
-      for (i = 0; i < TRAIL_SIZE; ++i)
+      for (int i = 0; i < TRAIL_SIZE; ++i)
       {
         visited[currentView->playerLocations[PLAYER_DRACULA][i]] = TRUE;
       }
@@ -141,7 +150,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
       LocationID roadConnections[NUM_MAP_LOCATIONS];
       int roadCount = 0;
       VList curr = currentView->map->connections[from];
-
       while (curr != NULL)
       {
         if (curr->type == ROAD)
@@ -153,7 +161,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         curr = curr->next;
       }
 
-      for (i = 0; i < roadCount; ++i)
+      for (int i = 0; i < roadCount; ++i)
       {
         if (!visited[roadConnections[i]])
         {
@@ -215,7 +223,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         curr = curr->next;
       }
 
-      for (i = 0; i < railCount; ++i)
+      for (int i = 0; i < railCount; ++i)
       {
         if (!visited[railConnections[i]])
         {
@@ -243,7 +251,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         curr = curr->next;
       }
 
-      for (i = 0; i < seaCount; ++i)
+      for (int i = 0; i < seaCount; ++i)
       {
         if (!visited[seaConnections[i]])
         {
@@ -255,15 +263,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     }
 
     *numLocations = j;
-
-  /* //for checking array and size
-    for (int i = 0; i < j; ++i)
-    {
-      printf("%d\n", locations[i]);
-    }
-
-    printf("%d\n", j);
-  */
 
     return locations;
 }
