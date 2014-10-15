@@ -13,7 +13,6 @@ void decideDraculaMove(DracView gameState)
 	//Get some information from game statec
    //PlayerID player = whoAmI(gameState);
    //LocationID currLocation = whereIs(gameState, player);
-   Round r = giveMeTheRound(gameState);
 
    //LocationID godLocation = whereIs(gameState, PLAYER_LORD_GODALMING);
    //LocationID sewLocation = whereIs(gameState, PLAYER_DR_SEWARD);
@@ -22,32 +21,45 @@ void decideDraculaMove(DracView gameState)
    LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
       BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
    
-
+   Round r = giveMeTheRound(gameState);
    if (r == 0) {
       //Go furthest away from h
       registerBestPlay("MR", "In Marseilles");
       return;
       //Prefer port cities
-      //registerBestPlay("CD", "NOTHING");
    }
-   int *numLocations = NULL;
-   LocationID *locations = whereCanIgo(gameState, numLocations, TRUE,FALSE);
+
+   printf("A\n");
+   int numLocations = 0;
+   printf("B\n");
+   LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE,FALSE);
+   printf("numLocations = %d\n", numLocations);
+   int i = 0;
+   for (i = 0; i < numLocations; ++i)
+   {
+      printf("numLocations[%d] is %d\n", i, locations[i]);
+   }
+
    int choice = locations[0];
 
-   for (int i = 0; i < PLACES; ++i)
+   int j = 0; 
+   //int isFound = FALSE;
+   for (i = 0; i < PLACES; ++i)
    {
-      for (int j = 0; j < *numLocations; ++i)
+      printf("first for loop %d\n", i);
+      for (j = 0; j < numLocations; ++j)
       {
          if (places[i]==locations[j])
          {
+            printf("second for loop %d\n", j);
             choice = places[i];
+            //isFound = TRUE;
             break;
          }
       }
    }
    
-
-   //Register bad move
    char *move = idToAbbrev(choice);
-   registerBestPlay(move, "NOTHING");
+   char *name = idToName(choice);
+   registerBestPlay(move, name);
 }
