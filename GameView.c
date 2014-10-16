@@ -133,10 +133,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
   for (i = 0; i < NUM_MAP_LOCATIONS; ++i)
     visited[i] = FALSE;
 
-  locations[j] = from;
-  visited[from] = TRUE;
-  j++;
-
   if (player == PLAYER_DRACULA)
   {
     visited[ST_JOSEPH_AND_ST_MARYS] = TRUE;
@@ -144,6 +140,13 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     {
       visited[currentView->playerLocations[PLAYER_DRACULA][i]] = TRUE;
     }
+  }
+
+  if (visited[from] == FALSE)
+  {
+    locations[j] = from;
+    visited[from] = TRUE;
+    j++;
   }
 
   if (road == TRUE)
