@@ -114,150 +114,157 @@ void getHistory(GameView currentView, PlayerID player,
 LocationID *connectedLocations(GameView currentView, int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea)
-{
-    int j = 0;
-    LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
-    LocationID visited[NUM_MAP_LOCATIONS];
+{    
+  if (round == 0) {
+     *numLocations = NUM_MAP_LOCATIONS;
+     LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
+     int i;
+     for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+        locations[i] = i;
+     }
+     return locations;
+  }
 
-    int i;
-    for (i = 0; i < NUM_MAP_LOCATIONS; ++i)
-      visited[i] = FALSE;
+  int j = 0;
+  LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
+  LocationID visited[NUM_MAP_LOCATIONS];
 
-    if (player == PLAYER_DRACULA)
+  int i;
+  for (i = 0; i < NUM_MAP_LOCATIONS; ++i)
+    visited[i] = FALSE;
+
+  locations[j] = from;
+  visited[from] = TRUE;
+  j++;
+
+  if (player == PLAYER_DRACULA)
+  {
+    visited[ST_JOSEPH_AND_ST_MARYS] = TRUE;
+    for (i = 0; i < TRAIL_SIZE; ++i)
     {
-      visited[ST_JOSEPH_AND_ST_MARYS] = TRUE;
-      for (i = 0; i < TRAIL_SIZE; ++i)
+      visited[currentView->playerLocations[PLAYER_DRACULA][i]] = TRUE;
+    }
+  }
+
+  if (road == TRUE)
+  {
+    LocationID roadConnections[NUM_MAP_LOCATIONS];
+    int roadCount = 0;
+    VList curr = currentView->map->connections[from];
+
+    while (curr != NULL)
+    {
+      if (curr->type == ROAD)
       {
-        visited[currentView->playerLocations[PLAYER_DRACULA][i]] = TRUE;
+        roadConnections[roadCount] = curr->v;
+
+        roadCount++;
       }
+      curr = curr->next;
     }
 
-    if(visited[from] == FALSE)
+    for (i = 0; i < roadCount; ++i)
     {
-      locations[j] = from;
-      visited[from] = TRUE;
-      j++;
-    }
-
-    if (road == TRUE)
-    {
-      LocationID roadConnections[NUM_MAP_LOCATIONS];
-      int roadCount = 0;
-      VList curr = currentView->map->connections[from];
-
-      while (curr != NULL)
+      if (!visited[roadConnections[i]])
       {
-        if (curr->type == ROAD)
-        {
-          roadConnections[roadCount] = curr->v;
-
-          roadCount++;
-        }
-        curr = curr->next;
-      }
-
-      for (i = 0; i < roadCount; ++i)
-      {
-        if (!visited[roadConnections[i]])
-        {
-          locations[j] = roadConnections[i];
-          visited[roadConnections[i]] = TRUE;
-          j++;
-        }
+        locations[j] = roadConnections[i];
+        visited[roadConnections[i]] = TRUE;
+        j++;
       }
     }
+  }
 
-    if ( (rail == TRUE) && (player != PLAYER_DRACULA) )
+  if ( (rail == TRUE) && (player != PLAYER_DRACULA) )
+  {
+    LocationID railConnections[NUM_MAP_LOCATIONS];
+    int railCount = 0;
+    VList curr = currentView->map->connections[from];
+
+    while (curr != NULL)
     {
-      LocationID railConnections[NUM_MAP_LOCATIONS];
-      int railCount = 0;
-      VList curr = currentView->map->connections[from];
-
-      while (curr != NULL)
+      if ((round+player) % 4 != 0)
       {
-        if ((round+player) % 4 != 0)
+        if (curr->type == RAIL)
         {
-          if (curr->type == RAIL)
+          if ((round+player) % 4 >= 2)
           {
-            if ((round+player) % 4 >= 2)
+            VList secCurr = currentView->map->connections[curr->v];
+
+            while(secCurr != NULL)
             {
-              VList secCurr = currentView->map->connections[curr->v];
 
-              while(secCurr != NULL)
+              if (secCurr->type == RAIL)
               {
-
-                if (secCurr->type == RAIL)
+                if ((round+player) % 4 == 3)
                 {
-                  if ((round+player) % 4 == 3)
+                  VList thiCurr = currentView->map->connections[secCurr->v];
+
+                  while (thiCurr != NULL)
                   {
-                    VList thiCurr = currentView->map->connections[secCurr->v];
-
-                    while (thiCurr != NULL)
+                    if (thiCurr->type == RAIL)
                     {
-                      if (thiCurr->type == RAIL)
-                      {
-                        railConnections[railCount] = thiCurr->v;
+                      railConnections[railCount] = thiCurr->v;
 
-                        railCount++;
-                      }
-                      thiCurr = thiCurr->next;
+                      railCount++;
                     }
+                    thiCurr = thiCurr->next;
                   }
-                  railConnections[railCount] = secCurr->v;
-
-                  railCount++;
                 }
-                secCurr = secCurr->next;
+                railConnections[railCount] = secCurr->v;
+
+                railCount++;
               }
+              secCurr = secCurr->next;
             }
-            railConnections[railCount] = curr->v;
-
-            railCount++;
           }
-        }
-        curr = curr->next;
-      }
+          railConnections[railCount] = curr->v;
 
-      for (i = 0; i < railCount; ++i)
-      {
-        if (!visited[railConnections[i]])
-        {
-          locations[j] = railConnections[i];
-          visited[railConnections[i]] = TRUE;
-          j++;
+          railCount++;
         }
       }
+      curr = curr->next;
     }
 
-    if (sea == TRUE)
+    for (i = 0; i < railCount; ++i)
     {
-      LocationID seaConnections[NUM_MAP_LOCATIONS];
-      int seaCount = 0;
-      VList curr = currentView->map->connections[from];
-
-      while (curr != NULL)
+      if (!visited[railConnections[i]])
       {
-        if (curr->type == BOAT)
-        {
-          seaConnections[seaCount] = curr->v;
-
-          seaCount++;
-        }
-        curr = curr->next;
-      }
-
-      for (i = 0; i < seaCount; ++i)
-      {
-        if (!visited[seaConnections[i]])
-        {
-          locations[j] = seaConnections[i];
-          visited[seaConnections[i]] = TRUE;
-          j++;
-        }
+        locations[j] = railConnections[i];
+        visited[railConnections[i]] = TRUE;
+        j++;
       }
     }
+  }
 
-    *numLocations = j;
+  if (sea == TRUE)
+  {
+    LocationID seaConnections[NUM_MAP_LOCATIONS];
+    int seaCount = 0;
+    VList curr = currentView->map->connections[from];
+
+    while (curr != NULL)
+    {
+      if (curr->type == BOAT)
+      {
+        seaConnections[seaCount] = curr->v;
+
+        seaCount++;
+      }
+      curr = curr->next;
+    }
+
+    for (i = 0; i < seaCount; ++i)
+    {
+      if (!visited[seaConnections[i]])
+      {
+        locations[j] = seaConnections[i];
+        visited[seaConnections[i]] = TRUE;
+        j++;
+      }
+    }
+  }
+
+  *numLocations = j;
 
   /* //for checking array and size
     for (int i = 0; i < j; ++i)
@@ -268,7 +275,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     printf("%d\n", j);
   */
 
-    return locations;
+  return locations;
 }
 
 static int findLatestPlayer (char c) {

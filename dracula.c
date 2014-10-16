@@ -22,16 +22,15 @@ void decideDraculaMove(DracView gameState)
       BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
    
    Round r = giveMeTheRound(gameState);
-   if (r == 0) {
+   printf("round = %d\n", r);
+   /*if (r == 0) {
       //Go furthest away from h
       registerBestPlay("MR", "In Marseilles");
       return;
       //Prefer port cities
-   }
+   }*/
 
-   printf("A\n");
    int numLocations = 0;
-   printf("B\n");
    LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE,FALSE);
    printf("numLocations = %d\n", numLocations);
    int i = 0;
