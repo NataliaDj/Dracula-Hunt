@@ -6,7 +6,7 @@
 #include "Game.h"
 #include "DracView.h"
 
-#define PLACES 12
+#define PLACES 11
 
 void decideDraculaMove(DracView gameState)
 {
@@ -43,7 +43,7 @@ void decideDraculaMove(DracView gameState)
    int choice = locations[0];
 
    int j = 0; 
-   //int isFound = FALSE;
+   int isFound = FALSE;
    for (i = 0; i < PLACES; ++i)
    {
       printf("first for loop %d\n", i);
@@ -53,9 +53,14 @@ void decideDraculaMove(DracView gameState)
          {
             printf("second for loop %d\n", j);
             choice = places[i];
-            //isFound = TRUE;
+            isFound = TRUE;
             break;
          }
+      }
+
+      if (isFound == TRUE)
+      {
+         break;
       }
    }
    
