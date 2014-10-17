@@ -10,26 +10,29 @@
 
 void decideDraculaMove(DracView gameState)
 {
-	//Get some information from game statec
-   //PlayerID player = whoAmI(gameState);
-   //LocationID currLocation = whereIs(gameState, player);
+   //Locations
+   LocationID dracLocation = whereIs(gameState, PLAYER_DRACULA);
+   LocationID godLocation = whereIs(gameState, PLAYER_LORD_GODALMING);
+   LocationID sewLocation = whereIs(gameState, PLAYER_DR_SEWARD);
+   LocationID vanLocation = whereIs(gameState, PLAYER_VAN_HELSING);
+   LocationID minLocation = whereIs(gameState, PLAYER_MINA_HARKER);
 
-   //LocationID godLocation = whereIs(gameState, PLAYER_LORD_GODALMING);
-   //LocationID sewLocation = whereIs(gameState, PLAYER_DR_SEWARD);
-   //LocationID vanLocation = whereIs(gameState, PLAYER_VAN_HELSING);
-   //LocationID minLocation = whereIs(gameState, PLAYER_MINA_HARKER);
+   //Array of dracula's path
    LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
       BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
    
+   //Starting Move
+   int score = giveMeTheScore(gameState);
    Round r = giveMeTheRound(gameState);
    printf("round = %d\n", r);
-   /*if (r == 0) {
+   if (r == 0) {
       //Go furthest away from h
-      registerBestPlay("MR", "In Marseilles");
+      registerBestPlay("MR", "It is time to begin");
       return;
       //Prefer port cities
-   }*/
+   }
 
+   //Dracula follow's his path
    int numLocations = 0;
    LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE,FALSE);
    printf("numLocations = %d\n", numLocations);
@@ -62,8 +65,36 @@ void decideDraculaMove(DracView gameState)
          break;
       }
    }
-   
-   char *move = idToAbbrev(choice);
+  
+   //Figuring out Dracula's message
    char *name = idToName(choice);
+   if (r % 13 == 0)
+   {
+      name = "Children of the night, be free!";
+   } else if (godLocation == dracLocation)
+   {
+      name = "Lord! Goddalm it";
+   } else if (sewLocation == dracLocation)
+   {
+      name = "Dr Stitch";
+   } else if (vanLocation == dracLocation)
+   {
+      name = "Fun Hellsing";
+   } else if (minLocation == dracLocation)
+   {
+      name = "Mind a Hark";
+   } else if (r == 1)
+   {
+      name = "My plans are in motion";
+   } else if (score < 50)
+   {
+      name = "Muahaha! The world is in the palm of my hand";
+   }else if (score < 100)
+   {
+      name = "Merely seconds to success!";
+   }
+
+   //Returns the move
+   char *move = idToAbbrev(choice);
    registerBestPlay(move, name);
 }
