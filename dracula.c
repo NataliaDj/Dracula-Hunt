@@ -7,6 +7,8 @@
 #include "DracView.h"
 
 #define PLACES 11
+#define INN 8
+#define OUT 14
 
 void decideDraculaMove(DracView gameState)
 {
@@ -20,6 +22,10 @@ void decideDraculaMove(DracView gameState)
    //Array of dracula's path
    LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
       BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
+//   LocationID inner[INN] = {NUREMBURG, FRANKFURT, COLOGNE, BRUSSELS, PARIS, 
+//      CLERMONT_FERRAND, GENEVA, ZURICH, STRASBOURG}
+//   LocationID outer[OUT] = {NUREMBURG, LEIPZIG, HAMBURG, AMSTERDAM, BRUSSELS, 
+//      LE_HAVRE, NANTES, BORDEAUX, TOULOUSE, MARSEILLES, GENOA, VENICE, MUNICH}
    
    //Starting Move
    int score = giveMeTheScore(gameState);
@@ -89,7 +95,7 @@ void decideDraculaMove(DracView gameState)
    } else if (score < 50)
    {
       name = "Muahaha! The world is in the palm of my hand";
-   }else if (score < 100)
+   } else if (score < 100)
    {
       name = "Merely seconds to success!";
    }
