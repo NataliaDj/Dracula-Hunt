@@ -281,6 +281,11 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
   return locations;
 }
 
+int findPathToLocation (GameView g, LocationID start, LocationID end, LocationID path[], TransportID trans[]) {
+   int citiesToDest = shortestPath(g->map, start, end, path, trans);
+   return citiesToDest;
+}
+
 static int findLatestPlayer (char c) {
    PlayerID currPlayer;
    switch (c) {

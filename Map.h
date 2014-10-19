@@ -34,5 +34,6 @@ void disposeMap(Map g);
 void showMap(Map g); 
 int  numV(Map g);
 int  numE(Map g, TransportID t);
+int shortestPath(Map g, LocationID start, LocationID end, LocationID path[], TransportID trans[]);
 
 #endif
