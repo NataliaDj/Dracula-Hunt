@@ -51,10 +51,6 @@ void decideHunterMove(HunterView gameState)
    //If we know Dracula is at Castle Dracula, head towards the castle
    if (dracLocation == CASTLE_DRACULA && player == PLAYER_MINA_HARKER) {
       registerBestPlay(idToAbbrev(path[1]), "NOTHING");
-   //If we know Dracula is at sea, we can spread our hunters around port
-   //cities to try and catch him when he comes back
-   } else if (dracLocation == SEA_UNKNOWN) {
-      //go to ports
 
    //Mina Harker goes to next Location on her pre-defined loop
    //around Castle Dracula if we don't have any relevant information
@@ -73,6 +69,7 @@ void decideHunterMove(HunterView gameState)
          }
       }
       registerBestPlay(idToAbbrev(move), "NOTHING");
+
    //Other AI hunters circle around map if we don't have any relevant info
    } else {
       //Pick random number between 0 and numLocations
