@@ -141,3 +141,8 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 
     return location;
 }
+
+int howCanIGetThere (HunterView g, LocationID start, LocationID end, LocationID path[], TransportID trans[]) {
+    int numCitiesToLocations = findPathToLocation(g->gameView, start, end, path, trans);
+    return numCitiesToLocations;
+}

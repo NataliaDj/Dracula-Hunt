@@ -127,4 +127,8 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea);
 
+//Find path to given destination from the players current location
+//Returns the number of cities in the path between the locations
+int findPathToLocation (GameView g, LocationID start, LocationID end, LocationID path[], TransportID trans[]);
+
 #endif

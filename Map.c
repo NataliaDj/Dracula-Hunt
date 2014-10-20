@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 
 static void addConnections(Map);
 
@@ -118,6 +119,106 @@ int numE(Map g, TransportID type)
       }
     }
     return nE;
+}
+
+int shortestPath(Map g, LocationID start, LocationID end, LocationID path[], TransportID trans[])
+{
+   // TODO: replace the code by a shortest path algorithm
+
+   // a valid path from London to Paris
+   // just to show what kinds of values are in the arrays
+   //path[0] = LONDON; trans[0] = ANY;
+   //path[1] = PLYMOUTH; trans[1] = ROAD;
+   //path[2] = LE_HAVRE; trans[2] = BOAT;
+   //path[3] = PARIS; trans[3] = RAIL;
+   assert(g != NULL);
+
+   //printf("%d %d\n", start, end);
+ 
+   int *visited = malloc (g->nV * sizeof(int));
+   int *pathway = malloc (g->nV * sizeof(int));
+   int i = 0;
+   int order = 0;
+   while (i < g->nV){
+      visited[i] = pathway[i] = -1;
+      i++;
+   }
+   Queue q = newQueue();
+   VList current;
+   int isFound = 0;
+   //int loop = 0;
+   QueueJoin(q, start);
+   while (!QueueIsEmpty(q))
+   {
+      int w = QueueLeave(q);
+      //printf("here is w %d %d %d\n", g->nV, w, visited[w]);
+
+      if (visited[w] == -1) 
+      {
+         //printf("if\n");
+         visited[w] = order;
+         order++;
+         //printf("%d\n", order);
+
+         for (current = g->connections[w]; 
+              current != NULL; 
+              current = current->next)
+         {
+            QueueJoin(q, current->v);
+
+            if (pathway[current->v] == -1) {
+               pathway[current->v] = w;
+               //printf("isFound is %d\n", isFound);
+            }
+
+            if (current->v == end)
+            {
+               isFound = 1;
+               break;
+            }
+         }
+
+      } else {
+         continue;
+      }
+   }
+
+   int distance = -1;
+   if (!isFound)
+   {
+      //printf("It's not found\n");
+      path[0] = -1;
+   } else {
+      //printf("It's found\n");
+      int j = end;
+      distance = 1;
+      //printf("first\n");
+      while (j != start)
+      {
+         j = pathway[j];
+         distance++;
+      }
+      //printf("after first\n");
+ 
+      //printf("count = %d\n", count);
+      path[0] = start;
+      path[distance-1] = end;
+      //printf("%d->%d\n",path[0],path[count] );
+ 
+      j = end;
+      int x = distance;
+      i = distance-1;
+ 
+      //printf("second\n");
+      while (j != start)
+      {
+         path[--i] = pathway[j];
+         trans[--x] = g->connections[j]->type;
+         j = pathway[j];
+      }
+   }
+   return distance;
+
 }
 
 // Add edges to Graph representing map of Europe

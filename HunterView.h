@@ -113,5 +113,8 @@ LocationID *whereCanIgo(HunterView currentView, int *numLocations,
 LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea);
 
+//Find path to given destination from the players current location
+//Returns the number of cities in the path between the locations
+int howCanIGetThere (HunterView h, LocationID start, LocationID end, LocationID path[], TransportID trans[]);
 
 #endif
