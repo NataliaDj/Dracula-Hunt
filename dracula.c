@@ -7,8 +7,11 @@
 #include "DracView.h"
 
 #define PLACES 11
-#define INN 8
+#define INN 9
 #define OUT 14
+#define SPECIAL 4
+
+static int countHunter (LocationID locations[], int length, DracView gameState);
 
 void decideDraculaMove(DracView gameState)
 {
@@ -20,82 +23,135 @@ void decideDraculaMove(DracView gameState)
    LocationID minLocation = whereIs(gameState, PLAYER_MINA_HARKER);
 
    //Array of dracula's path
-   LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
-      BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
-//   LocationID inner[INN] = {NUREMBURG, FRANKFURT, COLOGNE, BRUSSELS, PARIS, 
-//      CLERMONT_FERRAND, GENEVA, ZURICH, STRASBOURG}
-//   LocationID outer[OUT] = {NUREMBURG, LEIPZIG, HAMBURG, AMSTERDAM, BRUSSELS, 
-//      LE_HAVRE, NANTES, BORDEAUX, TOULOUSE, MARSEILLES, GENOA, VENICE, MUNICH}
+   //LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
+   //   BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
+   LocationID inner[INN] = {NUREMBURG, FRANKFURT, COLOGNE, BRUSSELS, PARIS, 
+      CLERMONT_FERRAND, GENEVA, ZURICH, STRASBOURG};
+   LocationID outer[OUT] = {NUREMBURG, LEIPZIG, HAMBURG, AMSTERDAM, BRUSSELS, 
+      LE_HAVRE, NANTES, BORDEAUX, CLERMONT_FERRAND, MARSEILLES, GENOA, VENICE, MUNICH};
+   LocationID special[SPECIAL] = {NUREMBURG, COLOGNE, BRUSSELS, CLERMONT_FERRAND};
    
    //Starting Move
    int score = giveMeTheScore(gameState);
    Round r = giveMeTheRound(gameState);
    printf("round = %d\n", r);
    if (r == 0) {
-      //Go furthest away from h
-      registerBestPlay("MR", "It is time to begin");
+      registerBestPlay("NU", "It is time to begin");
       return;
-      //Prefer port cities
    }
 
    //Dracula follow's his path
    int numLocations = 0;
    LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE,FALSE);
    printf("numLocations = %d\n", numLocations);
-   int i = 0;
-   for (i = 0; i < numLocations; ++i)
-   {
-      printf("numLocations[%d] is %d\n", i, locations[i]);
-   }
-
+   int i, j, circle = OUT;
    int choice = locations[0];
 
-   int j = 0; 
-   int isFound = FALSE;
-   for (i = 0; i < PLACES; ++i)
+   //if (drac is in special locations)
+   // Checks the locations of the hunters and decide on a route
+   // (inner or outer circle)
+   //else
+   // checks if dracula is in the inner or outer circle
+   // Follows along the path
+
+   int specialCase = FALSE;
+   for (i = 0; i < SPECIAL; ++i)
    {
-      printf("first for loop %d\n", i);
-      for (j = 0; j < numLocations; ++j)
+      if (dracLocation == special[i])
       {
-         if (places[i]==locations[j])
+         specialCase = TRUE;
+      }
+   }
+
+   if (specialCase == TRUE)
+   {
+      printf("In specC\n");
+      int innie = countHunter(inner, INN, gameState);
+      int outie = countHunter(outer, OUT, gameState);
+      if (innie < outie)
+      {
+         circle = INN;
+      } 
+      else 
+      {
+         circle = OUT;
+      }
+   } 
+
+   if (circle == OUT)
+   {
+      int isFound = FALSE;
+      for (i = 0; i < OUT; ++i)
+      {
+         for (j = 0; j < numLocations; ++j)
          {
-            printf("second for loop %d\n", j);
-            choice = places[i];
-            isFound = TRUE;
+            if (outer[i]==locations[j])
+            {
+               choice = outer[i];
+               isFound = TRUE;
+               break;
+            }
+         }
+
+         if (isFound == TRUE)
+         {
             break;
          }
       }
-
-      if (isFound == TRUE)
+   } 
+   else
+   {
+      int isFound = FALSE;
+      for (i = 0; i < INN; ++i)
       {
-         break;
+         for (j = 0; j < numLocations; ++j)
+         {
+            if (inner[i]==locations[j])
+            {
+               choice = inner[i];
+               isFound = TRUE;
+               break;
+            }
+         }
+
+         if (isFound == TRUE)
+         {
+            break;
+         }
       }
    }
   
    //Figuring out Dracula's message
    char *name = idToName(choice);
-   if (r % 13 == 0)
+   if ((r % 13 == 0) && (r != 0))
    {
       name = "Children of the night, be free!";
-   } else if (godLocation == dracLocation)
+   } 
+   else if (godLocation == dracLocation)
    {
-      name = "Lord! Goddalm it";
-   } else if (sewLocation == dracLocation)
+      name = "Lord";
+   } 
+   else if (sewLocation == dracLocation)
    {
-      name = "Dr Stitch";
-   } else if (vanLocation == dracLocation)
+      name = "Dr";
+   } 
+   else if (vanLocation == dracLocation)
    {
-      name = "Fun Hellsing";
-   } else if (minLocation == dracLocation)
+      name = "Van";
+   } 
+   else if (minLocation == dracLocation)
    {
-      name = "Mind a Hark";
-   } else if (r == 1)
+      name = "Mina";
+   } 
+   else if (r == 1)
    {
       name = "My plans are in motion";
-   } else if (score < 50)
+   } 
+   else if (score < 50)
    {
       name = "Muahaha! The world is in the palm of my hand";
-   } else if (score < 100)
+   } 
+   else if (score < 100)
    {
       name = "Merely seconds to success!";
    }
@@ -103,4 +159,25 @@ void decideDraculaMove(DracView gameState)
    //Returns the move
    char *move = idToAbbrev(choice);
    registerBestPlay(move, name);
+}
+
+int countHunter (LocationID locations[], int length, DracView gameState)
+{
+   LocationID godLocation = whereIs(gameState, PLAYER_LORD_GODALMING);
+   LocationID sewLocation = whereIs(gameState, PLAYER_DR_SEWARD);
+   LocationID vanLocation = whereIs(gameState, PLAYER_VAN_HELSING);
+   LocationID minLocation = whereIs(gameState, PLAYER_MINA_HARKER);
+   int i, count = 0;
+   for (i = 0; i < length; ++i)
+   {
+      if ( (godLocation == locations[i]) ||
+           (sewLocation == locations[i]) ||
+           (vanLocation == locations[i]) ||
+           (minLocation == locations[i]) )
+      {
+         count++;
+      }
+   }
+
+   return count;
 }
