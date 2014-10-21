@@ -9,6 +9,8 @@
 #include "Game.h"
 #include "Places.h"
 
+#define MAX_MESSAGE_SIZE 6
+
 typedef struct hunterView *HunterView;
 
 // newHunterView() creates a new game view to summarise the current state of
@@ -116,5 +118,8 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 //Find path to given destination from the players current location
 //Returns the number of cities in the path between the locations
 int howCanIGetThere (HunterView h, LocationID start, LocationID end, LocationID path[], TransportID trans[]);
+
+//Returns the message string
+char *giveMeMessage (HunterView h);
 
 #endif

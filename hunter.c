@@ -1,6 +1,23 @@
 // hunter.c
 // Implementation of your "Fury of Dracula" hunter AI
 
+/* MESSAGES GUIDE
+1st Letter: Either Y or N, for "Yes, we have a message" or "No message"
+
+2nd Letter: Either Y or N, for "Yes, we know something about Draculas 
+            location" or "No we don't know his location"
+
+3rd Letter: Either Y or N, if our knowledge of his location is absolute
+            (exact) or vague
+
+4th Letter: If last letter was Y, then we put how we know about his location
+            T = Found something in trail, E = encountered Dracula. If 
+            the last letter was N, then we put another message in this letter
+
+5th/6th Letter: We give the Location abbrevation for the location information
+                we know
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,6 +25,11 @@
 #include "HunterView.h"
 
 #define MINA_LOOP_SIZE 5
+
+//Constants for knowledge about Draculas position
+#define NOT_KNOWN 0
+#define KNOWN_ABSOLUTE 1
+#define KNOWN_VAGUE 2
 
 void decideHunterMove(HunterView gameState)
 {
@@ -33,28 +55,38 @@ void decideHunterMove(HunterView gameState)
 
    //If not first round, check where the player can go
    int numLocations;
-   int *locations = whereCanIgo(gameState, &numLocations, TRUE, TRUE, TRUE);
+   LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE, TRUE, TRUE);
    //Register bad move to start off with
    char *badMove = idToAbbrev(*locations);
    registerBestPlay(badMove, "NOTHING");
 
    //Now try and pick better move
-   LocationID dracLocation = whereIs(gameState, PLAYER_DRACULA);
    LocationID currLocation = whereIs(gameState, player);
+
+   /*int dracLocationKnown;
+   //LocationID dracLocation = whereIs(gameState, PLAYER_DRACULA);
+   char *message = giveMeMessage(gameState);
+   for (int i = 0; i < MAX_MESSAGE_SIZE; i++) {
+      printf("message[%d] = %c\n", i, message[i]);
+   }
+   if (message[0] == 'Y' && message[1] == 'Y') {
+
+   }*/
+
 
    LocationID path[NUM_MAP_LOCATIONS];
    TransportID trans[NUM_MAP_LOCATIONS];
-   int numCitiesToCastle = howCanIGetThere(gameState, currLocation, CASTLE_DRACULA, path, trans);
-   
-   numCitiesToCastle++;//Just to make sure the compiler doesn't complain
 
-   //If we know Dracula is at Castle Dracula, head towards the castle
-   if (dracLocation == CASTLE_DRACULA && player == PLAYER_MINA_HARKER) {
-      registerBestPlay(idToAbbrev(path[1]), "NOTHING");
-
-   //Mina Harker goes to next Location on her pre-defined loop
-   //around Castle Dracula if we don't have any relevant information
-   } else if (player == PLAYER_MINA_HARKER) {
+   //If Mina Harker, stay at Castle Dracula
+   if (player == PLAYER_MINA_HARKER) {
+      if (currLocation == CASTLE_DRACULA) {
+         registerBestPlay("CD", "NOTHING");
+      } else {
+         int numCitiesToCastle = howCanIGetThere(gameState, currLocation, CASTLE_DRACULA, path, trans);
+         numCitiesToCastle++;//Just to make sure the compiler doesn't complain
+         registerBestPlay(idToAbbrev(path[1]), "NOTHING");
+      }
+   /*
       LocationID minaLoop[] = {AMSTERDAM, PARIS, LONDON, MUNICH, MADRID};
       LocationID move;
       int i;
@@ -68,12 +100,16 @@ void decideHunterMove(HunterView gameState)
             }
          }
       }
-      registerBestPlay(idToAbbrev(move), "NOTHING");
+      registerBestPlay(idToAbbrev(move), "NOTHING");*/
+
 
    //Other AI hunters circle around map if we don't have any relevant info
    } else {
-      //Pick random number between 0 and numLocations
-      //char *move = idToAbbrev(locations[ranNumber]);
+      LocationID trail[TRAIL_SIZE];
+      giveMeTheTrail(gameState, player, trail);
+      if (locations[numLocations/2] != trail[0] && locations[numLocations/2] != trail[1]) {
+         registerBestPlay(idToAbbrev(locations[numLocations/2], "NOTHING");
+      }
    }
 
 }

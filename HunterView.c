@@ -18,6 +18,7 @@ struct hunterView {
     int gameScore;
     GameView gameView;
     int hello;
+    char message[MAX_MESSAGE_SIZE];
 };
      
 struct player {
@@ -32,10 +33,15 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[])
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     HunterView hunterView = malloc(sizeof(struct hunterView));
+    assert(hunterView != NULL);
 
     hunterView->gameView = newGameView(pastPlays, messages);   
-    
     int i;
+    for (i = 0; i < MAX_MESSAGE_SIZE; i++) {
+        hunterView->message[i] = messages[0][i];
+    }
+
+    
     for (i = 0; i < NUM_PLAYERS; i++)
     {
         hunterView->players[i] = malloc(sizeof(struct player));
@@ -145,4 +151,8 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 int howCanIGetThere (HunterView g, LocationID start, LocationID end, LocationID path[], TransportID trans[]) {
     int numCitiesToLocations = findPathToLocation(g->gameView, start, end, path, trans);
     return numCitiesToLocations;
+}
+
+char *giveMeMessage (HunterView h) {
+    return h->message;
 }
