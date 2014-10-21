@@ -110,6 +110,43 @@ void decideHunterMove(HunterView gameState)
       if (locations[numLocations/2] != trail[0] && locations[numLocations/2] != trail[1]) {
          registerBestPlay(idToAbbrev(locations[numLocations/2], "NOTHING");
       }
+
+
+      int adjacent;  // stores amount of possible places
+      // find where players can go
+      LocationID *neighbour = whereCanTheyGo(gameState, &adjacent, player, 
+         TRUE, TRUE, TRUE);
+
+      // port cities are found by checking if they can go in the sea from a city
+      LocationID *portCity = whereCanTheyGo(gameState, &adjacent, player, 
+         FALSE, FALSE, TRUE);
+
+      LocationID trail[TRAIL_SIZE]; // stores past 6 plays
+      // places the past plays into trail array
+      giveMeTheTrail(gameView, player, trail);
+
+      int i;   // used in "for" loop
+      // find next place to go to
+      for (i = 0; i < adjacent; i++) {
+         // check for if they've already been to a city
+         if (neighbour[i] != trail[0] 
+            && isPortCity(currentView, neighbour[i], player) == TRUE) {
+            registerBestPlay(idToAbbrev(neighbour[i]), "seashells by the seashore");
+            break;
+         }
+      }
+
+      // no adjacent port cities were found, so randomly choose a city
+      int numLocations; // stores number of locations
+      int randomCity    // city chosen at random
+      // find what cities can be connected to by roads and rails
+      int *otherCities = connectedLocations (gameState, &numLocations, player, TRUE, TRUE, FALSE);
+      // Picks a different city if players've already been to city last turn
+      do {
+         randomCity = otherCities[rand() % numLocations];
+      } while (randomCity == trail[0]);
+
+      registerBestPlay(idToAbbrev(randomCity), "Doesn't seem to be a boat for miles");
    }
 
 }

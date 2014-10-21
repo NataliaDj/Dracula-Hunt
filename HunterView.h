@@ -122,4 +122,7 @@ int howCanIGetThere (HunterView h, LocationID start, LocationID end, LocationID 
 //Returns the message string
 char *giveMeMessage (HunterView h);
 
+// checks if a city is a port city
+int isPortCity (HunterView currentView, int city, int player);
+
 #endif
