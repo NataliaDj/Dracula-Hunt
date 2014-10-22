@@ -160,7 +160,7 @@ char *giveMeMessage (HunterView h) {
 int isPortCity (HunterView currentView, int city, int player) {
     int numLocations;
     int i;
-    LocationID *location = malloc(numLocations*sizeof(LocationID));
+    LocationID *location = malloc(*(&numLocations)*sizeof(LocationID));
     // check locations connected to sea A.K.A port cities
     location = connectedLocations(currentView->gameView, &numLocations,
                                currentView->players[player]->curLocation, 
