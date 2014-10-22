@@ -43,12 +43,16 @@ void decideHunterMove(HunterView gameState)
       switch (player) {
          case PLAYER_LORD_GODALMING:
             registerBestPlay(startLocations[0], "NOTHING");
+            break;
          case PLAYER_DR_SEWARD:
             registerBestPlay(startLocations[1], "NOTHING");
+            break;
          case PLAYER_VAN_HELSING:
             registerBestPlay(startLocations[2], "NOTHING");
+            break;
          case PLAYER_MINA_HARKER:
             registerBestPlay(startLocations[3], "NOTHING");
+            break;
       }
       return;
    }
