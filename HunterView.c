@@ -158,17 +158,17 @@ char *giveMeMessage (HunterView h) {
 }
 
 int isPortCity (HunterView currentView, int city, int player) {
-    int *numLocations;
+    int numLocations;
     int i;
-    LocationID *location = malloc(*numLocations*sizeof(LocationID));
+    LocationID *location = malloc(numLocations*sizeof(LocationID));
     // check locations connected to sea A.K.A port cities
-    location = connectedLocations(currentView->gameView, numLocations,
+    location = connectedLocations(currentView->gameView, &numLocations,
                                currentView->players[player]->curLocation, 
                                player, currentView->round,
                                FALSE, FALSE, TRUE);
 
     // check if the city passed in is a port city
-    for (i = 0, i < numLocations; i++) {
+    for (i = 0; i < numLocations; i++) {
         if (city == location[i]) {
             free(location);
             return TRUE;
