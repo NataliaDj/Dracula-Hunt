@@ -124,14 +124,13 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
      }
      return locations;
   }
-
   int j = 0, i;
   LocationID *locations = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
   LocationID visited[NUM_MAP_LOCATIONS];
 
   for (i = 0; i < NUM_MAP_LOCATIONS; ++i)
   {
-    locations[i] = -1
+    locations[i] = -1;
     visited[i] = FALSE;
   }
 

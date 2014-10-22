@@ -27,7 +27,7 @@ void decideDraculaMove(DracView gameState)
    //   BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
    LocationID inner[INN] = {NUREMBURG, COLOGNE, BRUSSELS, FRANKFURT, PARIS, 
       CLERMONT_FERRAND, GENEVA, ZURICH, STRASBOURG};
-   LocationID outer[OUT] = {NUREMBURG, LEIPZIG, HAMBURG, AMSTERDAM, BRUSSELS, 
+   LocationID outer[OUT] = {NUREMBURG, LEIPZIG, BERLIN, HAMBURG, BRUSSELS, 
       LE_HAVRE, NANTES, BORDEAUX, CLERMONT_FERRAND, MARSEILLES, GENOA, VENICE, MUNICH};
    LocationID special[SPECIAL] = {NUREMBURG, COLOGNE, BRUSSELS, CLERMONT_FERRAND};
    
@@ -42,7 +42,7 @@ void decideDraculaMove(DracView gameState)
 
    //Dracula follow's his path
    int numLocations = 0;
-   LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE,FALSE);
+   LocationID *locations = whereCanIgo(gameState, &numLocations, TRUE, FALSE);
    printf("numLocations = %d\n", numLocations);
    int i, j, circle = OUT;
    int choice = locations[0];
@@ -77,6 +77,18 @@ void decideDraculaMove(DracView gameState)
          circle = OUT;
       }
    } 
+   else
+   {
+      for (i = 0; i < INN; ++i)
+      {
+         if (locations[i] == dracLocation)
+         {
+            circle = INN;
+            break;
+         }
+      }
+   }
+
 
    if (circle == OUT)
    {
