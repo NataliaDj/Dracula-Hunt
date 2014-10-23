@@ -35,11 +35,12 @@ void decideHunterMove(HunterView gameState)
 {
    //Get some information from game state
    PlayerID player = whoAmI(gameState);
+   printf("Curr player is %d\n", player);
    Round r = giveMeTheRound(gameState);
    
    //For first round only, sets starting locations for each player
    if (r == 0) {
-      char *startLocations[] = {"AM", "CN", "MA", "MU"};
+      char *startLocations[] = {"AM", "CN", "ZU", "CD"};
       switch (player) {
          case PLAYER_LORD_GODALMING:
             registerBestPlay(startLocations[0], "NOTHING");
@@ -135,7 +136,7 @@ void decideHunterMove(HunterView gameState)
       // find next place to go to
       for (i = 0; i < adjacent; i++) {
          // check for if they've already been to a city
-         if (neighbour[i] != trail[0] 
+         if (neighbour[i] != trail[1] && neighbour[i] != trail[0]
             && isPortCity(gameState, neighbour[i], player) == TRUE) {
             registerBestPlay(idToAbbrev(neighbour[i]), "seashells by the seashore");
             break;
@@ -150,7 +151,7 @@ void decideHunterMove(HunterView gameState)
 		// Picks a different city if players've already been to city last turn
       do {
          randomCity = otherCities[rand() % numLocations];
-      } while (randomCity == trail[0]);
+      } while (randomCity == trail[1] || randomCity == trail[0]);
 
       registerBestPlay(idToAbbrev(randomCity), "Doesn't seem to be a boat for miles");
    }
