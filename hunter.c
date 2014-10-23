@@ -136,7 +136,7 @@ void decideHunterMove(HunterView gameState)
       // find next place to go to
       for (i = 0; i < adjacent; i++) {
          // check for if they've already been to a city
-         if (neighbour[i] != trail[1] 
+         if (neighbour[i] != trail[1] && neighbour[i] != trail[0]
             && isPortCity(gameState, neighbour[i], player) == TRUE) {
             registerBestPlay(idToAbbrev(neighbour[i]), "seashells by the seashore");
             break;
@@ -151,7 +151,7 @@ void decideHunterMove(HunterView gameState)
 		// Picks a different city if players've already been to city last turn
       do {
          randomCity = otherCities[rand() % numLocations];
-      } while (randomCity == trail[1]);
+      } while (randomCity == trail[1] || randomCity == trail[0]);
 
       registerBestPlay(idToAbbrev(randomCity), "Doesn't seem to be a boat for miles");
    }
