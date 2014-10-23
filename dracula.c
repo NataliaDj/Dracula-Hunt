@@ -12,8 +12,10 @@
 #define SPECIAL 4
 #define WEST 8
 #define EAST 9
+#define SOUTH 6
 
 static int countHunter (LocationID locations[], int length, DracView gameState);
+static int possibleHunterLoc(LocationID locations[], int distance, DracView gameState);
 
 void decideDraculaMove(DracView gameState)
 {
@@ -37,6 +39,7 @@ void decideDraculaMove(DracView gameState)
    
    LocationID west[WEST] = {TOULOUSE, SARAGOSSA, SANTANDER, MADRID, LISBON, CADIZ, GRANADA, ALICANTE};
    LocationID east[EAST] = {VIENNA, BUDAPEST, SZEGED, BELGRADE, BUCHAREST, SOFIA, VALONA, SARAJEVO, ZAGREB};
+   LocationID south[SOUTH] = {BARI, NAPLES, FLORENCE, VENICE, GENOA, MILAN};
 
    //Starting Move
    int score = giveMeTheScore(gameState);
@@ -96,6 +99,42 @@ void decideDraculaMove(DracView gameState)
       if (eastie < outie)
       {
          circle = EAST;
+      }
+   } else if (dracLocation == MUNICH) {
+      // counts the possible locations that the hunters can get to 
+      // tries to escape from it 
+      int outie = possibleHunterLoc(outer, OUT, gameState);
+      int eastie = possibleHunterLoc(east, EAST, gameState);
+      if (eastie < outie) {
+         circle = EAST;
+      } else {
+         //go to the outer circle
+         circle = INN;
+      }
+   } else if (dracLocation == FLORENCE) {
+      //when its out of the circle 
+      int southie = possibleHunterLoc(south, SOUTH, gameState);
+      int outie = possibleHunterLoc(outer, OUT, gameState);
+      if (southie == 0) {
+         // if there are no hunters whose move will be in the south, it'll be safe to make a move there 
+         //since it's in the corner of the map
+         circle = SOUTH; 
+      } else if (outie < southie) {
+         circle = OUT; 
+      }
+
+   } else if (dracLocation == ZURICH) {
+      int innie = possibleHunterLoc(inner, INN, gameState);
+      int outie = possibleHunterLoc(outer, OUT, gameState);
+      int eastie = possibleHunterLoc(east, EAST, gameState);
+      if (innie < outie) {
+         circle = INN;
+      } else if (innie > outie) {
+         circle = OUT;
+      } else if (eastie <outie) {
+         circle = EAST;
+      } else if (eastie > outie) {
+         circle = OUT;
       }
    }
    else
@@ -266,6 +305,24 @@ int countHunter (LocationID locations[], int length, DracView gameState)
          count++;
       }
    }
+
+   return count;
+}
+int possibleHunterLoc(LocationID locations[], int distance, DracView gameState) {
+   int numLocations = 0;
+   LocationID *godLocation = whereCanTheyGo(gameState, &numLocations, PLAYER_LORD_GODALMING, TRUE, TRUE, FALSE);
+   LocationID *sewLocation = whereCanTheyGo(gameState, &numLocations, PLAYER_DR_SEWARD, TRUE, TRUE, FALSE);
+   LocationID *vanLocation = whereCanTheyGo(gameState, &numLocations, PLAYER_VAN_HELSING, TRUE, TRUE, FALSE);
+   LocationID *minLocation = whereCanTheyGo(gameState, &numLocations, PLAYER_MINA_HARKER, TRUE, TRUE, FALSE);
+
+   //count the possible places where the hunters is able to reach from their current position 
+   int i;
+   int count = 0;
+   for (i = 0; i < distance; i++) {
+      if ((*godLocation == locations[i]) || (*sewLocation == locations[i]) || (*vanLocation == locations[i]) || (*minLocation == locations[i])) {
+         count++;
+   }
+}
 
    return count;
 }
