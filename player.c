@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
    disposeDracView(gameState);
 #else
    HunterView gameState;
-   char *plays = "GZA.... SED.... HZU....";
+   char *plays = "GAM.... SCN....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);

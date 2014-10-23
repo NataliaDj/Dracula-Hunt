@@ -35,11 +35,12 @@ void decideHunterMove(HunterView gameState)
 {
    //Get some information from game state
    PlayerID player = whoAmI(gameState);
+   printf("Curr player is %d\n", player);
    Round r = giveMeTheRound(gameState);
    
    //For first round only, sets starting locations for each player
    if (r == 0) {
-      char *startLocations[] = {"AM", "CN", "MA", "MU"};
+      char *startLocations[] = {"AM", "CN", "ZU", "CD"};
       switch (player) {
          case PLAYER_LORD_GODALMING:
             registerBestPlay(startLocations[0], "NOTHING");
