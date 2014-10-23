@@ -8,8 +8,10 @@
 
 #define PLACES 11
 #define INN 9
-#define OUT 14
+#define OUT 17
 #define SPECIAL 4
+#define WEST 8
+#define EAST 9
 
 static int countHunter (LocationID locations[], int length, DracView gameState);
 
@@ -23,14 +25,19 @@ void decideDraculaMove(DracView gameState)
    LocationID minLocation = whereIs(gameState, PLAYER_MINA_HARKER);
 
    //Array of dracula's path
-   //LocationID places[PLACES] = {MARSEILLES, GENOA, MILAN, ZURICH, GENEVA, STRASBOURG, 
-   //   BRUSSELS, LE_HAVRE, NANTES, BORDEAUX, TOULOUSE};
    LocationID inner[INN] = {NUREMBURG, COLOGNE, BRUSSELS, FRANKFURT, PARIS, 
       CLERMONT_FERRAND, GENEVA, ZURICH, STRASBOURG};
    LocationID outer[OUT] = {NUREMBURG, LEIPZIG, BERLIN, HAMBURG, BRUSSELS, 
-      LE_HAVRE, NANTES, BORDEAUX, CLERMONT_FERRAND, MARSEILLES, GENOA, VENICE, MUNICH};
+      LE_HAVRE, NANTES, BORDEAUX, SARAGOSSA, TOULOUSE, CLERMONT_FERRAND, MARSEILLES, 
+      GENOA, VENICE, MUNICH, VIENNA, PRAGUE};
    LocationID special[SPECIAL] = {NUREMBURG, COLOGNE, BRUSSELS, CLERMONT_FERRAND};
+
+   //LocationID changeToWest[1] = {SARAGOSSA};
+   //LocationID changeToEast[1] = {VIENNA};
    
+   LocationID west[WEST] = {TOULOUSE, SARAGOSSA, SANTANDER, MADRID, LISBON, CADIZ, GRANADA, ALICANTE};
+   LocationID east[EAST] = {VIENNA, BUDAPEST, SZEGED, BELGRADE, BUCHAREST, SOFIA, VALONA, SARAJEVO, ZAGREB};
+
    //Starting Move
    int score = giveMeTheScore(gameState);
    Round r = giveMeTheRound(gameState);
@@ -71,12 +78,26 @@ void decideDraculaMove(DracView gameState)
       if (innie < outie)
       {
          circle = INN;
-      } 
-      else 
-      {
-         circle = OUT;
       }
    } 
+   else if (dracLocation == SARAGOSSA)
+   {
+      int outie = countHunter (outer, OUT, gameState);
+      int westie = countHunter (west, WEST, gameState);
+      if (westie < outie)
+      {
+         circle = WEST;
+      }
+   }
+   else if (dracLocation == VIENNA)
+   {
+      int outie = countHunter (outer, OUT, gameState);
+      int eastie = countHunter (east, EAST, gameState);
+      if (eastie < outie)
+      {
+         circle = EAST;
+      }
+   }
    else
    {
       for (i = 0; i < INN; ++i)
@@ -87,19 +108,35 @@ void decideDraculaMove(DracView gameState)
             break;
          }
       }
+      for (i = 0; i < WEST; ++i)
+      {
+         if (locations[i] == dracLocation)
+         {
+            circle = WEST;
+            break;
+         }
+      }
+      for (i = 0; i < EAST; ++i)
+      {
+         if (locations[i] == dracLocation)
+         {
+            circle = EAST;
+            break;
+         }
+      }
    }
 
 
-   if (circle == OUT)
+   int isFound = FALSE;
+   if (circle == INN)
    {
-      int isFound = FALSE;
-      for (i = 0; i < OUT; ++i)
+      for (i = 0; i < INN; ++i)
       {
          for (j = 0; j < numLocations; ++j)
          {
-            if (outer[i]==locations[j])
+            if (inner[i]==locations[j])
             {
-               choice = outer[i];
+               choice = inner[i];
                isFound = TRUE;
                break;
             }
@@ -111,16 +148,55 @@ void decideDraculaMove(DracView gameState)
          }
       }
    } 
-   else
+   else if (circle == WEST)
    {
-      int isFound = FALSE;
-      for (i = 0; i < INN; ++i)
+      for (i = 0; i < WEST; ++i)
       {
          for (j = 0; j < numLocations; ++j)
          {
-            if (inner[i]==locations[j])
+            if (west[i]==locations[j])
             {
-               choice = inner[i];
+               choice = west[i];
+               isFound = TRUE;
+               break;
+            }
+         }
+
+         if (isFound == TRUE)
+         {
+            break;
+         }
+      }
+   }
+   else if (circle == EAST)
+   {
+      for (i = 0; i < EAST; ++i)
+      {
+         for (j = 0; j < numLocations; ++j)
+         {
+            if (east[i]==locations[j])
+            {
+               choice = east[i];
+               isFound = TRUE;
+               break;
+            }
+         }
+
+         if (isFound == TRUE)
+         {
+            break;
+         }
+      }
+   }
+   else
+   {
+      for (i = 0; i < OUT; ++i)
+      {
+         for (j = 0; j < numLocations; ++j)
+         {
+            if (outer[i]==locations[j])
+            {
+               choice = outer[i];
                isFound = TRUE;
                break;
             }
