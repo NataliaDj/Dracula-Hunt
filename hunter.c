@@ -34,8 +34,7 @@
 void decideHunterMove(HunterView gameState)
 {
    //Get some information from game state
-   PlayerID player = whoAmI(gameState);
-   printf("Curr player is %d\n", player);
+   PlayerID player = whoAmI(gameState); 
    Round r = giveMeTheRound(gameState);
    
    //For first round only, sets starting locations for each player
